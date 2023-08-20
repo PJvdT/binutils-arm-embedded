@@ -8,6 +8,8 @@
 stdenv.mkDerivation rec {
   pname = "binutils-arm-embedded";
   version = "2.24";
+  target = "arm-none-eabi";
+  target-cpu = "coretex-m4";
 
   suffix = {
     x86_64-linux  = "x86_64_arm-linux";
@@ -15,11 +17,11 @@ stdenv.mkDerivation rec {
   src = fetchurl {
     url = "https://ftp.gnu.org/gnu/binutils/binutils-${version}.tar.bz2";
     sha256 = {
-      x86_64-linux  = "sha256-/e8QLnVLKqnn0LKtRlIWpBtCFpThzgzJcmISFPisS9U=";
+      x86_64-linux  = "sha256-5ejFvpZk5/f5bg0JkZEQq1rVl3lPWxgJhxF3oPDxQTc=";
     }.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
 
-  output = [ "out" ];
+  output = [ ];
 
   dontPatchELF = true;
   dontStrip = true;
@@ -27,10 +29,10 @@ stdenv.mkDerivation rec {
   buildInputs = [];
 
   configurePhase = ''
-      ../../binutils-2.24/configure --target=arm-linux-eabi --prefix=$out/arm-linux-eabi \
-                                    --with-cpu=armv9-a --disable-werror \
-                                    --with-no-thumb-interwork --with-mode=thumb
-  '';
+      ./configure --target=${target} --prefix=$out/ \
+                  --with-cpu=${target-cpu} --disable-werror \
+                  --with-no-thumb-interwork --with-mode=thumb
+ '';
 
   buildPhase = ''
       make  all 2>&1 | tee ./binutils-build-logs.log
@@ -41,8 +43,8 @@ stdenv.mkDerivation rec {
   '';
 
   env = {
-     MY_RVDT_PATH="/home/ronald/gcc-arm-embedded-4.9/result/bin/"; 
-     _PATH="/home/ronald/gcc-arm-embedded-4.9/result/bin";
+     MY_RVDT_PATH="/home/ronald/src/toolchain/build/binutils-build/result/bin"; 
+     _PATH="/home/ronald/src/toolchain/build/binutils-build/result/bin";
      DIRENV_DISABLE="true";
   } ; 
 

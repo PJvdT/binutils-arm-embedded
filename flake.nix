@@ -15,8 +15,8 @@
      pkgs = import nixpkgs { inherit system; };
   in {
      packages.${system} = {
-         myPackage = pkgs.callPackage ./. {};
-         default = self.packages.${system}.myPackage;
+         binutils-arm-embedded = pkgs.callPackage ./. {};
+         default = self.packages.${system}.binutils-arm-embedded;
      };
   };
 }
