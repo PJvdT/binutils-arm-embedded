@@ -3,13 +3,14 @@
 , fetchurl
 , ncurses5
 , zlib
+, gettext
 }:
 
 stdenv.mkDerivation rec {
   pname = "binutils-arm-embedded";
   version = "2.24";
   target = "arm-none-eabi";
-  target-cpu = "coretex-m4";
+  target-cpu = "cortex-m4";
 
   suffix = {
     x86_64-linux  = "x86_64_arm-linux";
@@ -21,15 +22,15 @@ stdenv.mkDerivation rec {
     }.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
 
-  output = [ ];
+  output = [ "out" "info" "man" "dev" ];
 
   dontPatchELF = true;
   dontStrip = true;
 
-  buildInputs = [];
+  buildInputs = [ zlib gettext ];
 
   configurePhase = ''
-      ./configure --target=${target} --prefix=$out/ \
+      ./configure --target=${target} --prefix=$out \
                   --with-cpu=${target-cpu} --disable-werror \
                   --with-no-thumb-interwork --with-mode=thumb
  '';
